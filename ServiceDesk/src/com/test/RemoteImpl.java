@@ -25,5 +25,11 @@ public class RemoteImpl extends UnicastRemoteObject implements TestRemote {
 		else 
 			return false;
 	}
+	
+	@Override
+	public String getNameServer() throws RemoteException {
+		
+		return "PIPPO";
+	}
 
 }
