@@ -1,5 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=US-ASCII"
 	pageEncoding="US-ASCII"%>
+
+<%@ page import="java.sql.*"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
@@ -26,7 +28,33 @@
 				Dropdown <span class="caret"></span>
 			</button>
 			<ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu2">
+
+
+
 				<li role="presentation" class="dropdown-header">Dropdown header</li>
+				<% 
+       Class.forName("com.mysql.jdbc.Driver");
+       Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/test","root", null);
+
+       Statement st = con.createStatement();
+       ResultSet rs = st.executeQuery("select * from UTENTI");
+       try {
+    	  
+             while (rs.next()) {
+             %>
+				<li role="presentation"><a role="menuitem" tabindex="-1"
+					href="#"><%=rs.getString(1) + " " + rs.getString(2)  + " " + rs.getString(3)%></a></li>
+
+
+				<% }
+             } catch (Exception e) {
+                e.printStackTrace();
+             }
+            %>
+
+
+
+
 				<li role="presentation"><a role="menuitem" tabindex="-1"
 					href="#">Action</a></li>
 				<li role="presentation"><a role="menuitem" tabindex="-1"
@@ -66,20 +94,18 @@
 			</table>
 		</form>
 
-<div class="col-lg-3">
-		<form class="bs-example bs-example-form" method="post"
-			action="login.jsp">
-			<center>
-				<div class="input-group">
-					<span class="input-group-addon">Utente</span> <input type="text"
-						name="uname" class="form-control" placeholder="Username" value="" />
-					</td>
-				</div>
-				<div class="input-group">
-					<span class="input-group-addon">Password</span> <input type="password"
-						name="pass" class="form-control" placeholder="Password" value="" />
-					</td>
-				</div>
+		<div class="container">
+			<form class="form-signin" role="form" method="post"
+				action="login.jsp">
+				<h2 class="form-signin-heading">Autenticazione</h2>
+
+				<input class="form-control" name="uname" placeholder="Username"
+					required="" autofocus="" type="text"> <input
+					class="form-control" name="pass" placeholder="Password" required=""
+					autofocus="" type="text">
+
+				<button class="btn btn-lg btn-primary btn-block" type="submit"
+					value="Login">Sign in</button>
 
 				<input type="submit" value="Login" />
 				</td> <input type="reset" value="Reset" />
@@ -88,11 +114,31 @@
 					Yet Not Registered!! <a href="reg.jsp">Register Here</a>
 				</h4>
 
-			</center>
-		</form>
-</div>
+
+			</form>
+		</div>
 
 
+
+		<select name="cmb" id="cmb" style="width: 178">
+			<option value="">Select One</option>
+			<% 
+       Class.forName("com.mysql.jdbc.Driver");
+       Connection con2 = DriverManager.getConnection("jdbc:mysql://localhost:3306/test","root", null);
+
+       Statement st2 = con2.createStatement();
+       ResultSet rs2 = st2.executeQuery("select * from UTENTI");
+       try {
+    	  
+             while (rs2.next()) {
+             %>
+			<option value="<%=rs2.getString("nome")%>"><%=rs2.getString("nome") + " " + rs2.getString(2)%></option>
+			<% }
+             } catch (Exception e) {
+                e.printStackTrace();
+             }
+            %>
+		</select>
 
 
 	</div>
