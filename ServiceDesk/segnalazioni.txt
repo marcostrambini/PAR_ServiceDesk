@@ -1,0 +1,6 @@
+2,marco,closed, problema al pc,verra sostituito il pc
+3,pippo,aperta, problema stampante,abbiamo acquistato una stampante nuova
+4,pippo,aperta, problema monitor,prova a spegnere e riaccendere
+5,franco,aperta, non invia la mail,SCOPPIA!!!!
+6,giovanni,closed, il telefono non funziona,pending
+7,somaro,aperta, ho il cazzo duro,pending
