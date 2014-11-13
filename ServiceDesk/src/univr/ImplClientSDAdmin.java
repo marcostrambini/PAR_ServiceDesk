@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 
 
-public class ImplClientSDAmin {
+public class ImplClientSDAdmin {
 
 	static InterfaceServerSDAdmin server = null;
 
@@ -23,12 +23,34 @@ public class ImplClientSDAmin {
 	public static void main(String[] args) throws RemoteException  {
 		//		if(System.getSecurityManager()==null)
 		//			System.setSecurityManager(new RMISecurityManager());
+		
+		
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		
+		String hostname = "";
+		
 		try {
+		
+			System.out.println("Dove si trova in esecuzione il server centrale? [1]=localhost [2]=remoto");
+			if (br.readLine().equals("1"))
+				hostname = "localhost";
+			else{
+				System.out.println("Insirisci l'hostname o l'indirizzo ip del server: ");
+				hostname = br.readLine();
+				
+			}
+			
+		
+		
+		
+		
+			System.out.println("Provo a contattare il server "+hostname);
+		
 			while(true){
 		
 				
-				Registry reg = LocateRegistry.getRegistry(3456);
-				BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+				Registry reg = LocateRegistry.getRegistry(hostname, 3456);
+				
 
 				server =(InterfaceServerSDAdmin)reg.lookup("ServerSD");
 	
@@ -44,7 +66,7 @@ public class ImplClientSDAmin {
 				System.out.println("| Visualizza segnalazione particolare : [2] |");
 				System.out.println("| Rispondi a segnalazione particolare : [3] |");
 				System.out.println("| Chiudi una segnalazione particolare : [4] |");
-				
+				System.out.println("| Esci dal programma                  : [5] |");
 				
 				System.out.println("| scelta: ");
 				int scelta = Integer.parseInt(br.readLine());
@@ -89,7 +111,9 @@ public class ImplClientSDAmin {
 					ticket=0;
 					break;
 					
-					
+				case 5:
+					System.exit(0);
+					break;
 			
 				
 			

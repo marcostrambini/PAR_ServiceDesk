@@ -4,21 +4,21 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 
-import org.nocrala.tools.texttablefmt.Table;
 import org.nocrala.tools.texttablefmt.*;
 
-public class ImplServerSD extends UnicastRemoteObject implements InterfaceServerSDAdmin,
+public class ImplServerSD2 extends UnicastRemoteObject implements InterfaceServerSDAdmin,
 InterfaceServerSDUser {
 
 
 
-	protected ImplServerSD() throws RemoteException {
+	protected ImplServerSD2() throws RemoteException {
 		super();
 
 	}
@@ -391,6 +391,8 @@ InterfaceServerSDUser {
 		Tools tools = new Tools();
 		String nomeFileSegnalazioni = "segnalazioni.txt";
 		String nomeFileTicket = "numeroTicket.txt";
+		
+		
 
 		try {
 			if(!tools.esisteFile(nomeFileSegnalazioni)){
@@ -415,8 +417,9 @@ InterfaceServerSDUser {
 		}
 
 
-
-		ImplServerSD ssd = new ImplServerSD();
+		
+		System.setSecurityManager(new RMISecurityManager());
+		ImplServerSD2 ssd = new ImplServerSD2();
 		Registry reg = LocateRegistry.createRegistry(3456);
 		System.out.println("ho lanciato il seguente registro alla porta 3456: "+reg);
 		reg.rebind("ServerSD", ssd);

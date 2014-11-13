@@ -1,12 +1,13 @@
 package univr;
 
+import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 import org.nocrala.tools.texttablefmt.Table;
 
-public interface InterfaceServerSDAdmin extends Remote {
+public interface InterfaceServerSDAdmin extends Serializable,Remote {
 	public int getNumeroSegnalazioniTOT() throws RemoteException;
 	public int getNumeroSegnalazioniChiuse() throws RemoteException;
 	public String visualizzaSegnalazioni() throws RemoteException;
