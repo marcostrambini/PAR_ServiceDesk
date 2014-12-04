@@ -7,8 +7,10 @@ import java.rmi.activation.*;
 import java.rmi.registry.*;
 import java.rmi.server.*;
 import java.util.Properties;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
+
 import java.net.MalformedURLException;
 import java.rmi.MarshalledObject;
 import java.rmi.RemoteException;
@@ -23,10 +25,7 @@ import java.net.*;
  */
 final class SetupServerSD {
 
-	/**
-	 * Variabile che memorizza l'ip del server su cui attivare il sistema.
-	 */
-        private static String serverIP;
+
 
 	/**
 	 * metodo main che inizializza il sistema.
@@ -36,21 +35,28 @@ final class SetupServerSD {
 
         public static void main(String args[]) {
 
-		serverIP=args[0];
-                String policyGroup = System.getProperty("progetto.policy");
-                String implCodebase = System.getProperty("progetto.impl.codebase");
+        		String lease=args[0];
+        		//String lease = "60000";
+                String policyGroup = System.getProperty("group.policy");
+                String implCodebase = System.getProperty("univr.impl.codebase");
                 System.out.println("Sono il codice di inizializzazione dei server.");
-             	System.out.println("I server verranno ora attivati sulla macchina con IP: "+serverIP);
-                System.setSecurityManager(new RMISecurityManager());
-                System.getProperties().put("java.rmi.dgc.leaseValue","240000");
-
+        		
+                if(System.getSecurityManager()==null){
+        			System.setSecurityManager(new RMISecurityManager());
+        		}
+                
+//                System.getProperties().put("java.rmi.dgc.leaseValue", lease);
+                System.out.println("Tempo di lease a parametro in millisecondi = "+lease);
                 try {
-			MarshalledObject stubmar=null;
-                        Properties prop = new Properties();
+                		
+                	MarshalledObject stubmar=null;
+                    Properties prop = new Properties();
                 	prop.put("java.security.policy", policyGroup);
-             		prop.put("progetto.impl.codebase", implCodebase);
+             		prop.put("univr.impl.codebase", implCodebase);
              		prop.put("java.class.path", "no_classpath");
+             		prop.put("java.rmi.dgc.leaseValue", lease);
 
+             		
 // creazione del gruppo di attivazione del server centrale attivabile
 
 			System.out.println(" ");
@@ -62,37 +68,49 @@ final class SetupServerSD {
                         System.out.println("Il gruppo e' stato creato,  registrato col sistema d'attivazione, ed ha identificativo = "+groupID);
                         // creazione di un descrittore per il main server
                         System.out.println("Creo l'Activation Descriptor.");
-                        ActivationDesc actDesc = new ActivationDesc(groupID, "progetto.ServerCentraleImpl",implCodebase, null);
+                        ActivationDesc actDesc = new ActivationDesc(groupID, "univr.ImplServerSDAct",implCodebase, null);
 			System.out.println("Activation Descriptor creato."+actDesc);
                         // Registro il server attivabile
                         System.out.println("Ora registro il descrittore.");
-                        ServerCentrale stub_sc = (ServerCentrale)Activatable.register(actDesc);
+                        
+                        InterfaceServerSDAdmin stub_ServerSD = (InterfaceServerSDAdmin)Activatable.register(actDesc);
+                        //ImplServerSDAct stub_ServerSD = (ImplServerSDAct)Activatable.register(actDesc);
+                         
+                        
                         System.out.println("Descrittore registrato.");
                         System.out.println("E' stato creato l'activation descriptor del server che e' stato registrato col demone d'attivazione");
-            		System.out.println("Il server attivabile che adesso puo' essere acceduto attraverso lo stub: "+stub_sc);
-			File filecen = new File ("FileStubCentrale");
-			FileOutputStream out = new FileOutputStream(filecen);
-        		ObjectOutputStream oout = new ObjectOutputStream(out);
-        		stubmar=new MarshalledObject(stub_sc);
-       			oout.writeObject(stubmar);
-       			oout.close();
-			System.out.println("Salvata la referenza al server centrale");
-			System.out.println(" ");
+                        System.out.println("Il server attivabile che adesso puo' essere acceduto attraverso lo stub: "+stub_ServerSD);
+                       
+//                        Naming.rebind("ServerSD", stub_ServerSD);
+                        Naming.rebind("ServerSD", stub_ServerSD);
+                        InterfaceServerSDAdmin test = (InterfaceServerSDAdmin) Naming.lookup("ServerSD");
+                        System.out.println("se faccio una lookup vedo: "+test.toString());
+			
+	                    File filecen = new File ("FileStubCentrale");
+				        FileOutputStream out = new FileOutputStream(filecen);
+				        ObjectOutputStream oout = new ObjectOutputStream(out);
+				        stubmar=new MarshalledObject(stub_ServerSD);
+				        oout.writeObject(stubmar);
+				        oout.close();
+				        System.out.println("Salvata la referenza al server centrale");
+				        System.out.println(" ");
 
 
-//Invocazione del metodo test per attivare il server centrale
-try {
-			System.out.println(" ");
-			System.out.println("Ora Invoco il metodo test per attivare il ServerCentrale");
-        		System.out.println("Uso lo stub appena creato per invocare il metodo remoto del server");
-        		System.out.println("Poiche' e' la prima invocazione, cio' causera' il lancio del server centrale.");
-       			stub_sc.testCentrale();
-			System.out.println("E' terminato il metodo test.Il Server Centrale e' ora attivo");
-
-
-
- 	}catch (Exception e) {System.out.println("Errori nella chiamata metodo test: "+e);}
-	}catch (Exception e) {System.out.println("SetupSC : Errori nella fase di setup: "+e);}
+////Invocazione del metodo test per attivare il server centrale
+//try {
+//			System.out.println(" ");
+//			System.out.println("Ora Invoco il metodo test per attivare il ServerCentrale");
+//        		System.out.println("Uso lo stub appena creato per invocare il metodo remoto del server");
+//        		System.out.println("Poiche' e' la prima invocazione, cio' causera' il lancio del server centrale.");
+//       			stub_sc.testCentrale();
+//			System.out.println("E' terminato il metodo test.Il Server Centrale e' ora attivo");
+//
+//
+//
+// 	}catch (Exception e) {System.out.println("Errori nella chiamata metodo test: "+e);}
+                        
+                        
+	}catch (Exception e) {System.out.println("SetupServerSD : Errori nella fase di setup: "+e);}
 
 
 

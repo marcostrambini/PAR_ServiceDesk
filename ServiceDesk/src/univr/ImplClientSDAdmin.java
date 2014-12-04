@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.Console;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
@@ -29,6 +30,10 @@ public class ImplClientSDAdmin {
 		
 		String hostname = "";
 		
+		if(System.getSecurityManager()==null){
+			System.setSecurityManager(new RMISecurityManager());
+		}
+		
 		try {
 		
 			System.out.println("Dove si trova in esecuzione il server centrale? [1]=localhost [2]=remoto");
@@ -45,15 +50,27 @@ public class ImplClientSDAdmin {
 		
 		
 			System.out.println("Provo a contattare il server "+hostname);
+			
+			Registry reg = LocateRegistry.getRegistry(hostname, 1098);
+			
+//			//se unicast
+//			server =(InterfaceServerSDAdmin)reg.lookup("ServerSD");
+
+
+			//se Activatable
+
+			String location = "rmi://"+hostname+"/ServerSD";
+			
+			InterfaceServerSDAdmin server = (InterfaceServerSDAdmin)Naming.lookup(location);
 		
 			while(true){
 		
 				
-				Registry reg = LocateRegistry.getRegistry(hostname, 3456);
-				
+			
 
-				server =(InterfaceServerSDAdmin)reg.lookup("ServerSD");
-	
+				
+				
+//				server =(InterfaceServerSDAdmin)Naming.lookup(location);
 				
 				System.out.println("\n| -----------  MENU Service Desk ---------- |");
 				System.out.println("| Riepiloghi:                               |");

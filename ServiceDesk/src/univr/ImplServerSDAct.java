@@ -1,16 +1,18 @@
 package univr;
 
-import InterfaceMS;
+
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.MarshalledObject;
+import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.rmi.activation.Activatable;
 import java.rmi.activation.ActivationDesc;
+import java.rmi.activation.ActivationException;
 import java.rmi.activation.ActivationGroup;
 import java.rmi.activation.ActivationID;
 import java.rmi.activation.ActivationSystem;
@@ -26,17 +28,48 @@ public class ImplServerSDAct extends Activatable implements InterfaceServerSDAdm
 InterfaceServerSDUser , Unreferenced{
 
 
-	  protected ImplServerSDAct(ActivationID id, int port) throws Exception {
-			super(id, port);
-				System.out.println(" Sono dentro il costruttore del Server Centrale.");
-     			System.out.println(" E' stato invocato con successo il costruttore della superclasse Activatable, ");
-     			System.out.println(" passando come parametro l'ActivationID "+id+" del server che verra esportato alla porta "+port);
-     			ActivationSystem actS = ActivationGroup.getSystem();
-     			System.out.println(" La referenza al sistema di attivazione (rmid) e': "+actS);
-     			ActivationDesc actD = actS.getActivationDesc(id);
-     			System.out.println("Ho ricavato l' ActivationDescriptor "+actD+", associato al server attivabile grazie all'ActivationID="+id);
-     			System.out.println("Costruttore Server Centrale terminato.");
-      }
+	protected ImplServerSDAct(ActivationID id, MarshalledObject data) throws RemoteException, ActivationException {
+		super(id, 3456);
+		
+		//da vedere se questa parte metterla nel main
+		Tools tools = new Tools();
+		
+		String nomeFileSegnalazioni = "segnalazioni.txt";
+		String nomeFileTicket = "numeroTicket.txt";
+
+		
+		System.out.println(" ********** Sono dentro il costruttore del Server Centrale.");
+		System.out.println(" ********** E' stato invocato con successo il costruttore della superclasse Activatable, ");
+		System.out.println(" ********** passando come parametro l'ActivationID "+id+" del server che verra esportato alla porta "+3456);
+		ActivationSystem actS = ActivationGroup.getSystem();
+		System.out.println(" ********** La referenza al sistema di attivazione (rmid) e': "+actS);
+		ActivationDesc actD = actS.getActivationDesc(id);
+		System.out.println(" ********** Ho ricavato l' ActivationDescriptor "+actD+", associato al server attivabile grazie all'ActivationID="+id);
+		System.out.println(" ********** Costruttore Server Centrale terminato.");
+		
+		try {
+			if(!tools.esisteFile(nomeFileSegnalazioni)){
+				tools.creaFile(nomeFileSegnalazioni);
+				System.out.println("ho creato il file "+nomeFileSegnalazioni+" che non esisteva");
+				//				tools.scriviFile(nomeFileSegnalazioni, "TICKET" + "," + "UTENTE" + ","+ "STATO"+ "," + "MESSAGGIO"+","+"SOLUZIONE");
+				System.out.println("no inizializzato il file "+nomeFileSegnalazioni+" con i nomi degli attributi");
+			}
+		} catch (FileNotFoundException e) {
+			System.out.println("problemi di creazione del file: "+nomeFileSegnalazioni);
+		}
+
+
+		try {
+			if(!tools.esisteFile(nomeFileTicket)){
+				tools.creaFile(nomeFileTicket);
+				System.out.println("ho creato il file "+nomeFileTicket+" che non esisteva");
+				tools.scriviFile(nomeFileTicket, "1");
+			}
+		} catch (FileNotFoundException e) {
+			System.out.println("probmei di creazione del file: "+nomeFileTicket);
+		}
+		// Fine Blocco per la creazione di file di testo
+	}
 
 	Tools tools = new Tools();
 
@@ -51,10 +84,10 @@ InterfaceServerSDUser , Unreferenced{
 		if(!tools.esisteFile(nomeFile)){
 			try {
 				tools.creaFile(nomeFile);
-//				tools.scriviFile(nomeFile, "TICKET" + "," + "UTENTE" + ","+ "STATO"+ "," + "MESSAGGIO"+","+"SOLUZIONE");
+				//				tools.scriviFile(nomeFile, "TICKET" + "," + "UTENTE" + ","+ "STATO"+ "," + "MESSAGGIO"+","+"SOLUZIONE");
 
 			} catch (FileNotFoundException e1) {
-				System.out.println("problemi di creazione del file "+nomeFile);
+				System.out.println("[ATTENZIONE] Problemi di creazione del file "+nomeFile);
 			}
 		}
 
@@ -67,7 +100,7 @@ InterfaceServerSDUser , Unreferenced{
 
 
 		} catch (IOException e) {
-			System.out.println("Problemi con la lettura del file: "+nomeFile);
+			System.out.println("[ATTENZIONE] Problemi con la lettura del file: "+nomeFile);
 		}
 	}
 
@@ -114,7 +147,7 @@ InterfaceServerSDUser , Unreferenced{
 
 		} catch (IOException e) {
 
-			System.out.println("ho qualche problema di lettura del file "+nomeFile + " dal metodo che visualizza le segnalazioni chiuse!");
+			System.out.println("[ATTENZIONE] Ho qualche problema di lettura del file "+nomeFile + " dal metodo che visualizza le segnalazioni chiuse!");
 			return null;
 
 		}
@@ -163,8 +196,8 @@ InterfaceServerSDUser , Unreferenced{
 
 
 		} catch (IOException e) {
-			System.out.println("problemi di lettura del file "+nomeFile);
-			return "problemi con la ricerca della segnalazione";
+			System.out.println("[ATTENZIONE] Problemi di lettura del file "+nomeFile);
+			return "[ATTENZIONE] Problemi con la ricerca della segnalazione";
 		}
 
 		//		if (segnalazioneTrovata != 0){
@@ -230,13 +263,13 @@ InterfaceServerSDUser , Unreferenced{
 				System.out.println("segnalazione numero "+numero+" aggiornata!");
 			}
 			else
-				System.out.println("non riesco a trovare la segnalazione numero "+numero+ " che cerchi!");
+				System.out.println("[ATTENZIONE] Non riesco a trovare la segnalazione numero "+numero+ " che cerchi!");
 
 
 
 
 		} catch (IOException e) {
-			System.out.println("ho qualche problema di lettura del file "+nomeFile + " dal metodo che chiude le segnalazioni!");
+			System.out.println("[ATTENZIONE] Ho qualche problema di lettura del file "+nomeFile + " dal metodo che chiude le segnalazioni!");
 		}
 
 
@@ -293,13 +326,13 @@ InterfaceServerSDUser , Unreferenced{
 				return "segnalazione numero "+numero+" chiusa!";
 			}
 			else
-				return "non riesco a trovare la segnalazione numero "+numero+ " che cerchi!";
+				return "[ATTENZIONE] Non riesco a trovare la segnalazione numero "+numero+ " che cerchi!";
 
 
 
 
 		} catch (IOException e) {
-			return "ho qualche problema di lettura del file "+nomeFile + " dal metodo che chiude le segnalazioni!";
+			return "[ATTENZIONE] Ho qualche problema di lettura del file "+nomeFile + " dal metodo che chiude le segnalazioni!";
 		}
 
 
@@ -315,7 +348,7 @@ InterfaceServerSDUser , Unreferenced{
 		try {
 			return (tools.leggiFileRitorna(nomeFile).size());
 		} catch (IOException e) {
-			System.out.println("ho qualche problema di lettura del file "+nomeFile + " dal metodo che conta le segnalazioni!");
+			System.out.println("[ATTENZIONE] Ho qualche problema di lettura del file "+nomeFile + " dal metodo che conta le segnalazioni!");
 			return 0;
 		}
 	}
@@ -355,7 +388,7 @@ InterfaceServerSDUser , Unreferenced{
 
 		} catch (IOException e) {
 
-			System.out.println("ho qualche problema di lettura del file "+nomeFile + " dal metodo che conta le segnalazioni chiuse!");
+			System.out.println("[ATTENZIONE] Ho qualche problema di lettura del file "+nomeFile + " dal metodo che conta le segnalazioni chiuse!");
 			return segnalazioniChiuse;
 		}
 	}
@@ -379,7 +412,7 @@ InterfaceServerSDUser , Unreferenced{
 				return numTicket;
 
 			} catch (IOException e) {
-				System.out.println("Problemi con la lettura del file: "+nomeFile);
+				System.out.println("[ATTENZIONE] Problemi con la lettura del file: "+nomeFile);
 			}
 		}
 		return 0;
@@ -403,36 +436,46 @@ InterfaceServerSDUser , Unreferenced{
 	@Override
 	public void unreferenced() {
 		try {
-			System.out.println(" Sono dentro il metodo unreferenced del server centrale: " + this);
-			System.out.println(" Ho invocato il metodo inactive per disattivare il server attivabile");
-			System.out.println(" Tale metodo si occupa anche di de-esportare il server");
-			System.out.println(" Il server "+this+" e' inattivo? "+inactive(getID()));
-			System.out.println(" Sto invocando il garbage collector dentro la JVM del server attivabile");
+			System.out.println(" [GC] Sono dentro il metodo unreferenced del server centrale: " + this);
+			System.out.println(" [GC] Ho invocato il metodo inactive per disattivare il server attivabile");
+			System.out.println(" [GC] Tale metodo si occupa anche di de-esportare il server");
+			
+			 Naming.unbind("ServerSD");
+             boolean ok = inactive(getID());
+			
+			System.out.println(" [GC] Il server "+this+" e' inattivo? "+ok);
+			System.out.println(" [GC] Sto invocando il garbage collector dentro la JVM del server attivabile");
 			System.gc();
-			System.out.println(" Sto uscendo dal metodo unreferenced.");
+			System.out.println(" [GC] Sto uscendo dal metodo unreferenced.");
 		}
 		catch (Exception e) {System.out.println("errore unreferenced. "+e);}
 	}
-	
-	
-	
+
+
+
 	/**
 	 * metodo main
 	 * @param args
 	 * @throws RemoteException
 	 */
-	public static void main(String[] args) throws RemoteException {
+	public static void main(String[] args){
 		Tools tools = new Tools();
-		
+
 		// Blocco per la creazione di file di testo
 		String nomeFileSegnalazioni = "segnalazioni.txt";
 		String nomeFileTicket = "numeroTicket.txt";
 
+
+		if(System.getSecurityManager()==null){
+			System.setSecurityManager(new RMISecurityManager());
+		}
+
+		/**
 		try {
 			if(!tools.esisteFile(nomeFileSegnalazioni)){
 				tools.creaFile(nomeFileSegnalazioni);
 				System.out.println("ho creato il file "+nomeFileSegnalazioni+" che non esisteva");
-//				tools.scriviFile(nomeFileSegnalazioni, "TICKET" + "," + "UTENTE" + ","+ "STATO"+ "," + "MESSAGGIO"+","+"SOLUZIONE");
+				//				tools.scriviFile(nomeFileSegnalazioni, "TICKET" + "," + "UTENTE" + ","+ "STATO"+ "," + "MESSAGGIO"+","+"SOLUZIONE");
 				System.out.println("no inizializzato il file "+nomeFileSegnalazioni+" con i nomi degli attributi");
 			}
 		} catch (FileNotFoundException e) {
@@ -450,44 +493,18 @@ InterfaceServerSDUser , Unreferenced{
 			System.out.println("probmei di creazione del file: "+nomeFileTicket);
 		}
 		// Fine Blocco per la creazione di file di testo
-
-
-
-		ImplServerSDAct ssd = new ImplServerSDAct();
-		Registry reg = LocateRegistry.createRegistry(3456);
-		System.out.println("ho lanciato il seguente registro alla porta 3456: "+reg);
-		reg.rebind("ServerSD", ssd);
-		System.out.println("ho appena fatto la bind del server centrale");
-		try {
-			System.out.println("Il server centrale si trova sull'ip: " +InetAddress.getLocalHost());
-		} catch (UnknownHostException e) {
-			System.out.println("errore durante il recupero dell'indirizzo ip!");
-		}
-		
-
+		**/
 	}
-
-		//main dell'esempio
-		public static void main(String args[]) {
-		InterfaceMS refMobileServer = null;
-		 try {
-					System.setSecurityManager(new RMISecurityManager());
-					System.out.println("Invochiamo il metodo VisIP per visualizzare indirizzo dell'host che ospita il MS");
-					Registry reg = LocateRegistry.getRegistry(args[0],Integer.parseInt(args[1]));
-					refMobileServer = (InterfaceMS)reg.lookup("MServer");
-					String indirizzo=refMobileServer.VisIP();
-					System.out.println("Questo �� l'indirizzo dell'host che ospita il MobileServer: "+indirizzo);
-		}catch (Exception e) {System.out.println("Errori nella chiamata metodo VisIP: "+e);}
-
-
-
-		}
-
-
-	
-
-
-
 
 
 }
+
+
+
+
+
+
+
+
+
+
