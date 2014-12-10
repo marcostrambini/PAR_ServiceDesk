@@ -11,6 +11,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
+import java.util.Properties;
 
 
 
@@ -34,13 +35,16 @@ public class ImplClientSDAdmin {
 			System.setSecurityManager(new RMISecurityManager());
 		}
 		
+	    	
+		
+		
 		try {
 		
 			System.out.println("Dove si trova in esecuzione il server centrale? [1]=localhost [2]=remoto");
 			if (br.readLine().equals("1"))
 				hostname = "localhost";
 			else{
-				System.out.println("Insirisci l'hostname o l'indirizzo ip del server: ");
+				System.out.println("Inserisci l'hostname o l'indirizzo ip del server: ");
 				hostname = br.readLine();
 				
 			}

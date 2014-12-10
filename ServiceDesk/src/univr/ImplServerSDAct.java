@@ -4,6 +4,7 @@ package univr;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.rmi.MarshalledObject;
@@ -24,8 +25,7 @@ import java.util.ArrayList;
 
 import org.nocrala.tools.texttablefmt.*;
 
-public class ImplServerSDAct extends Activatable implements InterfaceServerSDAdmin,
-InterfaceServerSDUser , Unreferenced{
+public class ImplServerSDAct extends Activatable implements InterfaceServerSDAdmin , Unreferenced, Serializable{
 
 
 	protected ImplServerSDAct(ActivationID id, MarshalledObject data) throws RemoteException, ActivationException {
@@ -37,7 +37,7 @@ InterfaceServerSDUser , Unreferenced{
 		String nomeFileSegnalazioni = "segnalazioni.txt";
 		String nomeFileTicket = "numeroTicket.txt";
 
-		
+		System.out.println(" ********** SERVICE DESK SERVER CENTRALE **********");
 		System.out.println(" ********** Sono dentro il costruttore del Server Centrale.");
 		System.out.println(" ********** E' stato invocato con successo il costruttore della superclasse Activatable, ");
 		System.out.println(" ********** passando come parametro l'ActivationID "+id+" del server che verra esportato alla porta "+3456);
@@ -50,30 +50,30 @@ InterfaceServerSDUser , Unreferenced{
 		try {
 			if(!tools.esisteFile(nomeFileSegnalazioni)){
 				tools.creaFile(nomeFileSegnalazioni);
-				System.out.println("ho creato il file "+nomeFileSegnalazioni+" che non esisteva");
-				//				tools.scriviFile(nomeFileSegnalazioni, "TICKET" + "," + "UTENTE" + ","+ "STATO"+ "," + "MESSAGGIO"+","+"SOLUZIONE");
-				System.out.println("no inizializzato il file "+nomeFileSegnalazioni+" con i nomi degli attributi");
+				System.out.println(" ********** ho creato il file "+nomeFileSegnalazioni+" che non esisteva");
+				tools.scriviFile(nomeFileSegnalazioni, "0,utente test,aperta, anomalia test, messaggio test");
+				System.out.println("********** ho inizializzato il file "+nomeFileSegnalazioni+" con i nomi degli attributi");
 			}
 		} catch (FileNotFoundException e) {
-			System.out.println("problemi di creazione del file: "+nomeFileSegnalazioni);
+			System.out.println(" !!!!!!!! ATTENZIONE: problemi di creazione del file: "+nomeFileSegnalazioni);
 		}
 
 
 		try {
 			if(!tools.esisteFile(nomeFileTicket)){
 				tools.creaFile(nomeFileTicket);
-				System.out.println("ho creato il file "+nomeFileTicket+" che non esisteva");
+				System.out.println(" ********** ho creato il file "+nomeFileTicket+" che non esisteva");
 				tools.scriviFile(nomeFileTicket, "1");
 			}
 		} catch (FileNotFoundException e) {
-			System.out.println("probmei di creazione del file: "+nomeFileTicket);
+			System.out.println(" !!!!!!!! ATTENZIONE: problemi di creazione del file: "+nomeFileTicket);
 		}
 		// Fine Blocco per la creazione di file di testo
 	}
 
 	Tools tools = new Tools();
 
-
+	
 	/**
 	 * metodo per il client user a disposizione per aprire una segnalazione
 	 */
@@ -87,7 +87,7 @@ InterfaceServerSDUser , Unreferenced{
 				//				tools.scriviFile(nomeFile, "TICKET" + "," + "UTENTE" + ","+ "STATO"+ "," + "MESSAGGIO"+","+"SOLUZIONE");
 
 			} catch (FileNotFoundException e1) {
-				System.out.println("[ATTENZIONE] Problemi di creazione del file "+nomeFile);
+				System.out.println("[ATTENZIONE errore nella routine di apertura segnalazione] Problemi di creazione del file "+nomeFile);
 			}
 		}
 
@@ -100,7 +100,7 @@ InterfaceServerSDUser , Unreferenced{
 
 
 		} catch (IOException e) {
-			System.out.println("[ATTENZIONE] Problemi con la lettura del file: "+nomeFile);
+			System.out.println("[ATTENZIONE errore nella routine di apertura segnalazione] Problemi con la lettura del file: "+nomeFile);
 		}
 	}
 
@@ -116,7 +116,7 @@ InterfaceServerSDUser , Unreferenced{
 		String nomeFile = "segnalazioni.txt";
 
 		try {
-
+			System.out.println("--> Richiamato il metodo di visualizzazione della lista chiamate da parte del client");
 			ArrayList<String> arrayListSegnalazioni = tools.leggiFileRitorna(nomeFile);
 
 			String[][] riga = new String[arrayListSegnalazioni.size()][5];
@@ -146,9 +146,9 @@ InterfaceServerSDUser , Unreferenced{
 
 
 		} catch (IOException e) {
-
-			System.out.println("[ATTENZIONE] Ho qualche problema di lettura del file "+nomeFile + " dal metodo che visualizza le segnalazioni chiuse!");
-			return null;
+			String msg = "[ATTENZIONE nella routine di visualizza segnalazioni] Ho qualche problema di lettura del file "+nomeFile + " dal metodo che visualizza le segnalazioni chiuse!";
+			System.out.println(msg);
+			return msg;
 
 		}
 
@@ -167,6 +167,7 @@ InterfaceServerSDUser , Unreferenced{
 		String record = "";
 		ArrayList<String> arrayListSegnalazioni = new ArrayList<String>();
 		try {
+			System.out.println("--> Richiamato il metodo di visualizzazione della chiamata n° "+ numero + " da parte del client");
 			arrayListSegnalazioni = tools.leggiFileRitorna(nomeFile);
 			String[][] riga = new String[arrayListSegnalazioni.size()][5];
 			for(int i =0; i<arrayListSegnalazioni.size();i++){
@@ -196,8 +197,9 @@ InterfaceServerSDUser , Unreferenced{
 
 
 		} catch (IOException e) {
-			System.out.println("[ATTENZIONE] Problemi di lettura del file "+nomeFile);
-			return "[ATTENZIONE] Problemi con la ricerca della segnalazione";
+			String msg = "[ATTENZIONE nella routine di visualizza segnalazione particolare] Problemi di lettura del file "+nomeFile;
+			System.out.println(msg);
+			return msg;
 		}
 
 		//		if (segnalazioneTrovata != 0){
@@ -231,7 +233,7 @@ InterfaceServerSDUser , Unreferenced{
 		String nomeFile = "segnalazioni.txt";
 		int segnalazioneTrovata = -1;
 		try {
-
+			System.out.println("--> Richiamato aggiornamento per la segnalazione numero "+numero);
 			ArrayList<String> arrayListSegnalazioni = tools.leggiFileRitorna(nomeFile);
 
 			String[][] riga = new String[arrayListSegnalazioni.size()][5];
@@ -260,7 +262,7 @@ InterfaceServerSDUser , Unreferenced{
 
 				tools.clearFile(nomeFile);
 				tools.scriviFile(nomeFile, listaAggiornata);
-				System.out.println("segnalazione numero "+numero+" aggiornata!");
+				System.out.println("--> Segnalazione numero "+numero+" aggiornata con il seguente messaggio: "+messaggio);
 			}
 			else
 				System.out.println("[ATTENZIONE] Non riesco a trovare la segnalazione numero "+numero+ " che cerchi!");
@@ -294,7 +296,7 @@ InterfaceServerSDUser , Unreferenced{
 		String nomeFile = "segnalazioni.txt";
 		int segnalazioneTrovata = -1;
 		try {
-
+			System.out.println("--> Richiamata chiusura della segnalazione numero "+numero);
 			ArrayList<String> arrayListSegnalazioni = tools.leggiFileRitorna(nomeFile);
 
 			String[][] riga = new String[arrayListSegnalazioni.size()][5];
@@ -323,16 +325,19 @@ InterfaceServerSDUser , Unreferenced{
 
 				tools.clearFile(nomeFile);
 				tools.scriviFile(nomeFile, listaAggiornata);
+				System.out.println("--> Segnalazione n° "+numero+" chiusa con successo!");
 				return "segnalazione numero "+numero+" chiusa!";
 			}
 			else
-				return "[ATTENZIONE] Non riesco a trovare la segnalazione numero "+numero+ " che cerchi!";
+				return "[ATTENZIONE errori nella routine di chiusura segnalazioni] Non riesco a trovare la segnalazione numero "+numero+ " che cerchi!";
 
 
 
 
 		} catch (IOException e) {
-			return "[ATTENZIONE] Ho qualche problema di lettura del file "+nomeFile + " dal metodo che chiude le segnalazioni!";
+			String msg = "[ATTENZIONE] Ho qualche problema di lettura del file "+nomeFile + " dal metodo che chiude le segnalazioni!";
+			System.out.println(msg);
+			return msg;
 		}
 
 
@@ -344,11 +349,13 @@ InterfaceServerSDUser , Unreferenced{
 	@Override
 	public int getNumeroSegnalazioniTOT() throws RemoteException {
 		String nomeFile = "segnalazioni.txt";
-
+		
 		try {
-			return (tools.leggiFileRitorna(nomeFile).size());
+			int numeroSegnalazioni = tools.leggiFileRitorna(nomeFile).size();
+			//System.out.println("Numero segnalazioni registrate = "+numeroSegnalazioni);
+			return (numeroSegnalazioni);
 		} catch (IOException e) {
-			System.out.println("[ATTENZIONE] Ho qualche problema di lettura del file "+nomeFile + " dal metodo che conta le segnalazioni!");
+			System.out.println("[ATTENZIONE errori nel conteggio del numero delle segnalazioni] Ho qualche problema di lettura del file "+nomeFile + " dal metodo che conta le segnalazioni!");
 			return 0;
 		}
 	}
@@ -409,10 +416,11 @@ InterfaceServerSDUser , Unreferenced{
 				int numTicket = Integer.parseInt(listaNumeriTicket.get(0))+1;
 				tools.clearFile(nomeFile);
 				tools.scriviFile(nomeFile, String.valueOf(numTicket));
+				System.out.println("I Ticket sono arrivati al numero: "+numTicket);
 				return numTicket;
 
 			} catch (IOException e) {
-				System.out.println("[ATTENZIONE] Problemi con la lettura del file: "+nomeFile);
+				System.out.println("[ATTENZIONE errori nella routine di calcolo del numero ticket] Problemi con la lettura del file: "+nomeFile);
 			}
 		}
 		return 0;
@@ -435,13 +443,15 @@ InterfaceServerSDUser , Unreferenced{
 
 	@Override
 	public void unreferenced() {
+		Tools tools = new Tools();
 		try {
-			System.out.println(" [GC] Sono dentro il metodo unreferenced del server centrale: " + this);
+			
+			System.out.println(" [GC] Sono dentro il metodo unreferenced del server centrale: " + this + " richiamato il "+tools.getDataOra());
 			System.out.println(" [GC] Ho invocato il metodo inactive per disattivare il server attivabile");
 			System.out.println(" [GC] Tale metodo si occupa anche di de-esportare il server");
 			
-			 Naming.unbind("ServerSD");
-             boolean ok = inactive(getID());
+			Naming.unbind("ServerSD");
+            boolean ok = inactive(getID());
 			
 			System.out.println(" [GC] Il server "+this+" e' inattivo? "+ok);
 			System.out.println(" [GC] Sto invocando il garbage collector dentro la JVM del server attivabile");
@@ -495,6 +505,8 @@ InterfaceServerSDUser , Unreferenced{
 		// Fine Blocco per la creazione di file di testo
 		**/
 	}
+
+
 
 
 }

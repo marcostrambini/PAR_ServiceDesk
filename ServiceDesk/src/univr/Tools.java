@@ -2,13 +2,13 @@ package univr;
 
 import java.awt.Dimension;
 import java.io.BufferedReader;
-
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.File;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.ObjectInputStream.GetField;
 //import java.io.Reader;
 import java.net.InetAddress;
@@ -29,7 +29,7 @@ import javax.swing.JTable;
  * @author marcostrambini
  *
  */
-public class Tools {
+public class Tools implements Serializable{
 
 	public static ArrayList<String> repoString = new ArrayList<String>();
 	

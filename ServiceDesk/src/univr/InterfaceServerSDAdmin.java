@@ -14,7 +14,8 @@ public interface InterfaceServerSDAdmin extends Serializable,Remote {
 	public String visualizzaSegnalazioni(int numero) throws RemoteException;
 	public void rispondiSegnalazione(int numero, String messaggio) throws RemoteException;
 	public String chiudiSegnalazione(int numero) throws RemoteException;
-
+	public void apriSegnalazione(String user, String messaggio) throws RemoteException;
+	
 	
 
 }
