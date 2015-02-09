@@ -40,9 +40,6 @@ public class ImplServerSDAct extends Activatable implements InterfaceServerSDAdm
 	protected ImplServerSDAct(ActivationID id, MarshalledObject data) throws RemoteException, ActivationException {
 		super(id, 3456);
 		
-		//da vedere se questa parte metterla nel main
-		//Tools tools = new Tools();
-		
 		String nomeFileSegnalazioni = "segnalazioni.txt";
 		String nomeFileTicket = "numeroTicket.txt";
 
@@ -440,18 +437,6 @@ public class ImplServerSDAct extends Activatable implements InterfaceServerSDAdm
 	}
 
 
-
-//	/**
-//	 * metodo che crea l'intestazione della tabella
-//	 * @param t
-//	 */
-//	public void addIntestazioneSegnalazione(Table t){
-//		t.addCell("TICKET");
-//		t.addCell("UTENTE");
-//		t.addCell("STATO");
-//		t.addCell("MESSAGGIO");
-//		t.addCell("SOLUZIONE");
-//	}
 
 
 	@Override

@@ -43,6 +43,7 @@ final class SetupServerSD {
                 String implCodebase = System.getProperty("activation.impl.codebase");
                 String classNameImpl = System.getProperty("activation.classeserver");
                 String rmicodebase = System.getProperty("java.rmi.server.codebase");
+                
                 System.out.println("Sono il codice di inizializzazione dei server.");
         		
                 if(System.getSecurityManager()==null){
@@ -68,7 +69,7 @@ final class SetupServerSD {
              		System.out.println("java.rmi.dgc.leaseValue = "+lease);
              		prop.put("java.rmi.dgc.leaseValue", lease);
              		
-             		  System.out.println("java.rmi.server.codebase = "+rmicodebase);
+             		System.out.println("java.rmi.server.codebase = "+rmicodebase);
                   	prop.put("java.rmi.server.codebase", rmicodebase);
 
              		
@@ -83,6 +84,7 @@ final class SetupServerSD {
                         System.out.println("Il gruppo e' stato creato,  registrato col sistema d'attivazione, ed ha identificativo = "+groupID);
                         // creazione di un descrittore per il main server
                         System.out.println("Creo l'Activation Descriptor.");
+                        
                         ActivationDesc actDesc = new ActivationDesc(groupID, classNameImpl, implCodebase, null);
                         System.out.println("Activation Descriptor creato."+actDesc);
                         // Registro il server attivabile
