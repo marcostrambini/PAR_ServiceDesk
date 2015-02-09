@@ -1,26 +1,42 @@
 package univr;
 
+
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.rmi.MarshalledObject;
 import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
+import java.rmi.activation.Activatable;
+import java.rmi.activation.ActivationDesc;
+import java.rmi.activation.ActivationException;
+import java.rmi.activation.ActivationGroup;
+import java.rmi.activation.ActivationID;
+import java.rmi.activation.ActivationSystem;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.rmi.server.Unreferenced;
 import java.util.ArrayList;
 
 import org.nocrala.tools.texttablefmt.*;
 
-public class ImplServerSD2 extends UnicastRemoteObject implements InterfaceServerSDAdmin,
-InterfaceServerSDUser {
+public class ImplServerSDAct extends Activatable implements InterfaceServerSDAdmin,
+InterfaceServerSDUser , Unreferenced{
 
 
-
-	protected ImplServerSD2() throws RemoteException {
-		super();
-
+	protected ImplServerSDAct(ActivationID id, MarshalledObject data) throws RemoteException, ActivationException {
+		super(id, 3456);
+		System.out.println(" Sono dentro il costruttore del Server Centrale.");
+		System.out.println(" E' stato invocato con successo il costruttore della superclasse Activatable, ");
+		System.out.println(" passando come parametro l'ActivationID "+id+" del server che verra esportato alla porta "+3456);
+		ActivationSystem actS = ActivationGroup.getSystem();
+		System.out.println(" La referenza al sistema di attivazione (rmid) e': "+actS);
+		ActivationDesc actD = actS.getActivationDesc(id);
+		System.out.println("Ho ricavato l' ActivationDescriptor "+actD+", associato al server attivabile grazie all'ActivationID="+id);
+		System.out.println("Costruttore Server Centrale terminato.");
 	}
 
 	Tools tools = new Tools();
@@ -36,7 +52,7 @@ InterfaceServerSDUser {
 		if(!tools.esisteFile(nomeFile)){
 			try {
 				tools.creaFile(nomeFile);
-//				tools.scriviFile(nomeFile, "TICKET" + "," + "UTENTE" + ","+ "STATO"+ "," + "MESSAGGIO"+","+"SOLUZIONE");
+				//				tools.scriviFile(nomeFile, "TICKET" + "," + "UTENTE" + ","+ "STATO"+ "," + "MESSAGGIO"+","+"SOLUZIONE");
 
 			} catch (FileNotFoundException e1) {
 				System.out.println("problemi di creazione del file "+nomeFile);
@@ -372,7 +388,10 @@ InterfaceServerSDUser {
 
 
 
-
+	/**
+	 * metodo che crea l'intestazione della tabella
+	 * @param t
+	 */
 	public void addIntestazioneSegnalazione(Table t){
 		t.addCell("TICKET");
 		t.addCell("UTENTE");
@@ -382,23 +401,45 @@ InterfaceServerSDUser {
 	}
 
 
+	@Override
+	public void unreferenced() {
+		try {
+			System.out.println(" Sono dentro il metodo unreferenced del server centrale: " + this);
+			System.out.println(" Ho invocato il metodo inactive per disattivare il server attivabile");
+			System.out.println(" Tale metodo si occupa anche di de-esportare il server");
+			System.out.println(" Il server "+this+" e' inattivo? "+inactive(getID()));
+			System.out.println(" Sto invocando il garbage collector dentro la JVM del server attivabile");
+			System.gc();
+			System.out.println(" Sto uscendo dal metodo unreferenced.");
+		}
+		catch (Exception e) {System.out.println("errore unreferenced. "+e);}
+	}
+
+
+
 	/**
 	 * metodo main
 	 * @param args
 	 * @throws RemoteException
 	 */
-	public static void main(String[] args) throws RemoteException {
+	public static void main(String[] args){
 		Tools tools = new Tools();
+
+		// Blocco per la creazione di file di testo
 		String nomeFileSegnalazioni = "segnalazioni.txt";
 		String nomeFileTicket = "numeroTicket.txt";
-		
-		
+
+
+		if(System.getSecurityManager()==null){
+			System.setSecurityManager(new RMISecurityManager());
+		}
+
 
 		try {
 			if(!tools.esisteFile(nomeFileSegnalazioni)){
 				tools.creaFile(nomeFileSegnalazioni);
 				System.out.println("ho creato il file "+nomeFileSegnalazioni+" che non esisteva");
-//				tools.scriviFile(nomeFileSegnalazioni, "TICKET" + "," + "UTENTE" + ","+ "STATO"+ "," + "MESSAGGIO"+","+"SOLUZIONE");
+				//				tools.scriviFile(nomeFileSegnalazioni, "TICKET" + "," + "UTENTE" + ","+ "STATO"+ "," + "MESSAGGIO"+","+"SOLUZIONE");
 				System.out.println("no inizializzato il file "+nomeFileSegnalazioni+" con i nomi degli attributi");
 			}
 		} catch (FileNotFoundException e) {
@@ -415,26 +456,19 @@ InterfaceServerSDUser {
 		} catch (FileNotFoundException e) {
 			System.out.println("probmei di creazione del file: "+nomeFileTicket);
 		}
-
-
-		
-		System.setSecurityManager(new RMISecurityManager());
-		ImplServerSD2 ssd = new ImplServerSD2();
-		Registry reg = LocateRegistry.createRegistry(3456);
-		System.out.println("ho lanciato il seguente registro alla porta 3456: "+reg);
-		reg.rebind("ServerSD", ssd);
-		System.out.println("ho appena fatto la bind del server centrale");
-		try {
-			System.out.println("Il server centrale si trova sull'ip: " +InetAddress.getLocalHost());
-		} catch (UnknownHostException e) {
-			System.out.println("errore durante il recupero dell'indirizzo ip!");
-		}
-		
+		// Fine Blocco per la creazione di file di testo
 
 	}
 
 
-
-
-
 }
+
+
+
+
+
+
+
+
+
+

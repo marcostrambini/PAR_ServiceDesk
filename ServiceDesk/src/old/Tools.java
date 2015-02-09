@@ -1,4 +1,4 @@
-package univr;
+package old;
 
 import java.awt.Dimension;
 import java.io.BufferedReader;
@@ -144,7 +144,7 @@ public class Tools implements Serializable{
 	 * @throws IOException
 	 */
 	public ArrayList<String>  leggiFileRitorna(String nomeFile) throws IOException{ 
-//	public String[] leggiFileRitorna(String nomeFile) throws IOException{
+
 		ArrayList<String> arrayLetto = new ArrayList<String>();
 		FileReader fr = new FileReader(nomeFile);
 		BufferedReader br = new BufferedReader(fr);
@@ -154,10 +154,10 @@ public class Tools implements Serializable{
 		}
 		
 		String[] arrayReturn = listToArray(arrayLetto);
-//		arrayLetto.add("FINE");
+
 		fr.close();
 		return arrayLetto; 
-//		return arrayReturn;
+
 	}
 
 	/**

@@ -59,7 +59,7 @@ public class ImplClientSDUser implements Serializable{
 
 				switch(scelta){
 				case 1: 
-					Tools tools = new Tools();
+					//Tools tools = new Tools();
 					System.out.println("nome utente: ");
 					String user = br.readLine();
 					System.out.println("inserisci il tipo di problema");

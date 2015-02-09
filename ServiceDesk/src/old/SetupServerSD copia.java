@@ -7,10 +7,8 @@ import java.rmi.activation.*;
 import java.rmi.registry.*;
 import java.rmi.server.*;
 import java.util.Properties;
-
 import javax.naming.Context;
 import javax.naming.InitialContext;
-
 import java.net.MalformedURLException;
 import java.rmi.MarshalledObject;
 import java.rmi.RemoteException;
@@ -25,7 +23,10 @@ import java.net.*;
  */
 final class SetupServerSD {
 
-
+	/**
+	 * Variabile che memorizza l'ip del server su cui attivare il sistema.
+	 */
+        private static String lease;
 
 	/**
 	 * metodo main che inizializza il sistema.
@@ -35,46 +36,24 @@ final class SetupServerSD {
 
         public static void main(String args[]) {
 
-        		String lease=args[0];
-        		//String lease = "60000";
-        		
-      		
-                String policyGroup = System.getProperty("activation.policy");
-                String implCodebase = System.getProperty("activation.impl.codebase");
-                String classNameImpl = System.getProperty("activation.classeserver");
-                String rmicodebase = System.getProperty("java.rmi.server.codebase");
+        		lease=args[0];
+                String policyGroup = System.getProperty("univr.policy");
+                String implCodebase = System.getProperty("univr.impl.codebase");
                 System.out.println("Sono il codice di inizializzazione dei server.");
-        		
-                if(System.getSecurityManager()==null){
-        			System.setSecurityManager(new RMISecurityManager());
-        		}
-                
-//                System.getProperties().put("java.rmi.dgc.leaseValue", lease);
-                System.out.println("Tempo di lease a parametro in millisecondi = "+lease);
-                try {
-                	System.out.println("Carico le proprieta': ");	
-                	//MarshalledObject stubmar=null;
-                    Properties prop = new Properties();
-                    
-                    System.out.println("java.security.policy = "+policyGroup);
-                	prop.put("java.security.policy", policyGroup);
-                	
-                	System.out.println("activation.impl.codebase = "+implCodebase);
-             		prop.put("activation.impl.codebase", implCodebase);
-             		
-             		System.out.println("java.class.path = "+"no_classpath");
-             		prop.put("java.class.path", "no_classpath");
-             		
-             		System.out.println("java.rmi.dgc.leaseValue = "+lease);
-             		prop.put("java.rmi.dgc.leaseValue", lease);
-             		
-             		  System.out.println("java.rmi.server.codebase = "+rmicodebase);
-                  	prop.put("java.rmi.server.codebase", rmicodebase);
+                System.setSecurityManager(new RMISecurityManager());
+                System.getProperties().put("java.rmi.dgc.leaseValue","lease");
 
-             		
+                try {
+                		
+//                	MarshalledObject stubmar=null;
+                    Properties prop = new Properties();
+                	prop.put("java.security.policy", policyGroup);
+             		prop.put("univr.impl.codebase", implCodebase);
+             		prop.put("java.class.path", "no_classpath");
+
 // creazione del gruppo di attivazione del server centrale attivabile
 
-             			System.out.println(" ");
+			System.out.println(" ");
                         System.out.println("Creo il gruppo di attivazione del server Centrale.");
                         ActivationGroupDesc groupDesc = new ActivationGroupDesc(prop, null);
                         System.out.println("Gruppo creato.");
@@ -83,38 +62,26 @@ final class SetupServerSD {
                         System.out.println("Il gruppo e' stato creato,  registrato col sistema d'attivazione, ed ha identificativo = "+groupID);
                         // creazione di un descrittore per il main server
                         System.out.println("Creo l'Activation Descriptor.");
-                        ActivationDesc actDesc = new ActivationDesc(groupID, classNameImpl, implCodebase, null);
-                        System.out.println("Activation Descriptor creato."+actDesc);
+                        ActivationDesc actDesc = new ActivationDesc(groupID, "univr.ImplServerSDAct",implCodebase, null);
+			System.out.println("Activation Descriptor creato."+actDesc);
                         // Registro il server attivabile
                         System.out.println("Ora registro il descrittore.");
-                        
                         InterfaceServerSDAdmin stub_ServerSD = (InterfaceServerSDAdmin)Activatable.register(actDesc);
-                        //ImplServerSDAct stub_ServerSD = (ImplServerSDAct)Activatable.register(actDesc);
-                         
-                        
                         System.out.println("Descrittore registrato.");
                         System.out.println("E' stato creato l'activation descriptor del server che e' stato registrato col demone d'attivazione");
                         System.out.println("Il server attivabile che adesso puo' essere acceduto attraverso lo stub: "+stub_ServerSD);
-                       
-//                        Naming.rebind("ServerSD", stub_ServerSD);
                         Naming.rebind("ServerSD", stub_ServerSD);
-                     
                         
-                        InterfaceServerSDAdmin test = (InterfaceServerSDAdmin) Naming.lookup("ServerSD");
-                        System.out.println("se faccio una lookup vedo: "+test.toString());
-//			
-	                    File filecen = new File ("FileStubCentrale");
-				        FileOutputStream out = new FileOutputStream(filecen);
-				        ObjectOutputStream oout = new ObjectOutputStream(out);
-				        MarshalledObject stubmar = new MarshalledObject(stub_ServerSD);
-				        oout.writeObject(stubmar);
-				        oout.close();
-				        System.out.println("Salvata la referenza al server centrale");
-				        System.out.println(" ");
-				        
-				        
-				        stub_ServerSD.attivazione();
-				        
+			
+//                        File filecen = new File ("FileStubCentrale");
+//			            FileOutputStream out = new FileOutputStream(filecen);
+//        		ObjectOutputStream oout = new ObjectOutputStream(out);
+//        		stubmar=new MarshalledObject(stub_sc);
+//       			oout.writeObject(stubmar);
+//       			oout.close();
+//			System.out.println("Salvata la referenza al server centrale");
+//			System.out.println(" ");
+
 
 ////Invocazione del metodo test per attivare il server centrale
 //try {

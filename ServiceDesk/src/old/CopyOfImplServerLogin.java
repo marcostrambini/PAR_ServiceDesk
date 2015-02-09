@@ -1,16 +1,10 @@
-package univr;
+package old;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.rmi.MarshalledObject;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.rmi.activation.Activatable;
-import java.rmi.activation.ActivationDesc;
-import java.rmi.activation.ActivationException;
-import java.rmi.activation.ActivationGroup;
-import java.rmi.activation.ActivationID;
-import java.rmi.activation.ActivationSystem;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
@@ -18,7 +12,7 @@ import java.rmi.server.Unreferenced;
 import java.util.ArrayList;
 
 
-public class ImplServerLogin extends Activatable implements InterfaceLogin, Unreferenced {
+public class CopyOfImplServerLogin extends UnicastRemoteObject implements InterfaceLogin, Unreferenced {
 
 	private Remote SC;
 	private Remote MS;
@@ -26,18 +20,8 @@ public class ImplServerLogin extends Activatable implements InterfaceLogin, Unre
 	
 	
 	
-	protected ImplServerLogin(ActivationID id, MarshalledObject data) throws RemoteException, ActivationException {
-		super(id, 10000);
-		
-		System.out.println(" ********** SERVICE DESK SERVER LOGIN **********");
-		System.out.println(" ********** Sono dentro il costruttore del Server di Login.");
-		System.out.println(" ********** E' stato invocato con successo il costruttore della superclasse Activatable, ");
-		System.out.println(" ********** passando come parametro l'ActivationID "+id+" del server che verra esportato alla porta "+3456);
-		ActivationSystem actS = ActivationGroup.getSystem();
-		System.out.println(" ********** La referenza al sistema di attivazione (rmid) e': "+actS);
-		ActivationDesc actD = actS.getActivationDesc(id);
-		System.out.println(" ********** Ho ricavato l' ActivationDescriptor "+actD+", associato al server attivabile grazie all'ActivationID="+id);
-		System.out.println(" ********** Costruttore Server Centrale terminato.");
+	protected CopyOfImplServerLogin() throws RemoteException {
+		super();
 		
 	}
 
@@ -53,7 +37,7 @@ public class ImplServerLogin extends Activatable implements InterfaceLogin, Unre
 	 */
 	@Override
 	public boolean isValidLogin(String user, String pwd) throws RemoteException {
-		//Tools tools = new Tools();
+		Tools tools = new Tools();
 		String nomeFile = "utenti.txt";
 		int utenteTrovato = 0;
 		try {
@@ -162,11 +146,11 @@ public class ImplServerLogin extends Activatable implements InterfaceLogin, Unre
 				System.out.println("problemi di creazione del file "+nomeFile+" nel main del server di Login");
 			}
 
-	//	ImplServerLogin sl = new ImplServerLogin();
-//		Registry reg = LocateRegistry.createRegistry(2345);
-//		System.out.println("ho lanciato il seguente registro alla porta 2345: "+reg);
-//		reg.rebind("ServerLogin", sl);
-//		System.out.println("ho appena fatto la bind");
+		CopyOfImplServerLogin sl = new CopyOfImplServerLogin();
+		Registry reg = LocateRegistry.createRegistry(2345);
+		System.out.println("ho lanciato il seguente registro alla porta 2345: "+reg);
+		reg.rebind("ServerLogin", sl);
+		System.out.println("ho appena fatto la bind");
 
 	}
 
