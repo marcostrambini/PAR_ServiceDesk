@@ -106,8 +106,17 @@ public class ImplServerLogin extends Activatable implements InterfaceLogin, Unre
 
 
 
-		if(utenteTrovato>=1)
+		if(utenteTrovato>=1){
+			if(user.equals("admin") && pwd.equals("admin")){
+				//ritorna il MA
+			}else{
+				//ritorna il MS
+			}
+			
+			
 			return true;
+		}
+			
 		else
 			return false;
 
@@ -145,6 +154,12 @@ public class ImplServerLogin extends Activatable implements InterfaceLogin, Unre
 		}
 	}
 
+	
+	/**
+	 * metodo che cerca l'utente nel file
+	 * @param user
+	 * @return
+	 */
 	private boolean trovaUtente(String user){
 
 		

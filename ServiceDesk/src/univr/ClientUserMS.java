@@ -49,7 +49,7 @@ public class ClientUserMS extends UnicastRemoteObject  {
 		reg.rebind("ClientUserMS", cliUser);
 		System.out.println("ho appena fatto la bind del mobile server");
 		try {
-			System.out.println("Il mobile server si trova sull'ip: " +InetAddress.getLocalHost());
+			System.out.println("Il mobile server si trova sull'ip: " +InetAddress.getLocalHost().getHostAddress());
 		} catch (UnknownHostException e) {
 			System.out.println("errore durante il recupero dell'indirizzo ip!");
 		}
@@ -91,7 +91,7 @@ public class ClientUserMS extends UnicastRemoteObject  {
 //				server =(InterfaceServerSDAdmin)Naming.lookup(location);
 				
 				System.out.println("\n| -----------  MENU Client ---------- |");
-		                                  
+		        System.out.println("| Benvenuto "+nome);                          
 				System.out.println("| Funzioni:                                 |");
 				System.out.println("| Apri una segnalazione			      : [1] |");
 				System.out.println("| Esci dal programma                  : [2] |");
@@ -104,7 +104,7 @@ public class ClientUserMS extends UnicastRemoteObject  {
 				
 				case 1: 
 					
-					System.out.println("Snserisci la tua segnalazione: ");
+					System.out.println("Inserisci la tua segnalazione: ");
 					String segnalazione = br.readLine();
 					server.apriSegnalazione(nome, segnalazione);
 					System.out.println("Segnalazione inserita");
@@ -127,9 +127,7 @@ public class ClientUserMS extends UnicastRemoteObject  {
 
 			e.printStackTrace();
 		}
-		
-		
-		
+
 
 	}
 
